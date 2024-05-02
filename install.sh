@@ -1,20 +1,24 @@
 #!/bin/bash
 
-# List of directories to create symlinks for
-folders=("skhd" "yabai" "iterm2")
+# File containing the list of directories
+folder_file="folder_list.txt"
 
 # Destination directory for symlinks
 destination="$HOME/.config"
 
-# Loop through each folder in the list
-for folder in "${folders[@]}"; do
-  # Check if the folder exists in the current directory
+# Check if the folder list file exists
+if [ ! -f "$folder_file" ]; then
+  echo "Folder list file does not exist."
+  exit 1
+fi
+
+# Read the list from the file and create symlinks
+while read -r folder; do
   if [ -d "$folder" ]; then
-    # Create a symlink in the destination directory pointing to the current directory's folder
     ln -s "$(pwd)/$folder" "$destination/$folder"
     echo "Created symlink for $folder"
   else
     echo "Folder $folder does not exist in the current directory"
   fi
-done
+done < "$folder_file"
 

@@ -1,19 +1,21 @@
 #!/bin/bash
 
-# List of symlinked directories to remove
-folders=("skhd" "yabai" "iterm2")
+# File containing the list of directories
+folder_file="folder_list.txt"
 
 # Destination directory where symlinks are located
 destination="$HOME/.config"
 
-# Loop through each folder in the list
-for folder in "${folders[@]}"; do
-  # Path of the symlink in the destination directory
-  symlink_path="$destination/$folder"
+# Check if the folder list file exists
+if [ ! -f "$folder_file" ]; then
+  echo "Folder list file does not exist."
+  exit 1
+fi
 
-  # Check if the symlink exists
+# Read the list from the file and remove symlinks
+while read -r folder; do
+  symlink_path="$destination/$folder"
   if [ -L "$symlink_path" ]; then
-    # Remove the symlink
     rm "$symlink_path"
     echo "Deleted symlink for $folder"
   elif [ -e "$symlink_path" ]; then
@@ -21,5 +23,5 @@ for folder in "${folders[@]}"; do
   else
     echo "No symlink for $folder to delete"
   fi
-done
+done < "$folder_file"
 
